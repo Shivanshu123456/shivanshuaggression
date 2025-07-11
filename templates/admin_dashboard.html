@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="container mt-5">
+    <!-- ✅ Title + Greeting -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="display-5 text-primary">Dashboard</h2>
+        <p class="text-muted small">Welcome, {{ user_name }}!</p>
+    </div>
+
+    <!-- ✅ Alerts -->
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <strong>Tip:</strong> Hover over charts for more details.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- ✅ Tabs -->
+    <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="maintenance-tab" data-bs-toggle="tab" data-bs-target="#maintenance" type="button" role="tab">Maintenance</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="health-tab" data-bs-toggle="tab" data-bs-target="#health" type="button" role="tab">Health</button>
+        </li>
+    </ul>
+
+    <!-- ✅ Tab Content -->
+    <div class="tab-content" id="dashboardTabsContent">
+
+        <!-- ✅ Maintenance Tab -->
+        <div class="tab-pane fade show active" id="maintenance" role="tabpanel">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Maintenance Summary</h5>
+                    <span class="badge bg-warning text-dark">Monthly</span>
+                </div>
+                <div class="card-body">
+                    <canvas id="maintenanceChart" class="mb-3"></canvas>
+                    <p class="text-muted small fst-italic">Last updated: {{ now.strftime('%d %b %Y') }}</p>
+                    <button class="btn btn-outline-primary btn-sm">Download Report</button>
+                    <button class="btn btn-outline-secondary btn-sm">View History</button>
+
+                    <!-- 🔽 Maintenance Details Toggle -->
+                    <div class="text-end mt-3">
+                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#maintenanceDetails">
+                            View Detailed Logs
+                        </button>
+                    </div>
+
+                    <div class="collapse mt-3" id="maintenanceDetails">
+                        <div class="card card-body bg-light border">
+                            <h5 class="mb-3 text-primary">Recent Maintenance Logs</h5>
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Machine A - Oil Change
+                                    <span class="badge bg-success">Completed</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Machine B - Alignment Check
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Machine C - Brake Service
+                                    <span class="badge bg-danger">Overdue</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 🔽 Tooltip Help Button -->
+                    <div class="text-end mt-3">
+                        <button class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Bar chart shows maintenance frequency over recent months">
+                            <i class="fas fa-info-circle"></i> Help
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ Operational Health Tab -->
+        <div class="tab-pane fade" id="health" role="tabpanel">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Operational Health</h5>
+                    <button class="btn btn-link btn-sm text-decoration-none text-info">Details</button>
+                </div>
+                <div class="card-body">
+                    <canvas id="healthChart" class="mb-3"></canvas>
+                    <p class="text-success small">System operating at normal levels</p>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 92%">92%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ✅ Footer -->
+    <footer class="text-center text-muted mt-5 small">
+        SmartOps Portal · {{ now.year }}
+        <div class="mt-2">
+            <a href="#" class="text-decoration-none me-3">Help</a>
+            <a href="#" class="text-decoration-none me-3">Settings</a>
+            <a href="{{ url_for('logout') }}" class="text-decoration-none">Log Out</a>
+        </div>
+    </footer>
+</section>
+
+<!-- ✅ Toast Notification -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Charts loaded successfully.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toastEl = document.querySelector('.toast');
+        if (toastEl) new bootstrap.Toast(toastEl).show();
+
+        // Switch to Health tab
+        const healthTab = document.querySelector('#health-tab');
+        if (healthTab) {
+            const tab = new bootstrap.Tab(healthTab);
+            tab.show();
+        }
+
+        // Enable tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+{% endblock %}

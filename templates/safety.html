@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow p-6 mb-6">
+    <h2 class="section-title">🚨 Report Safety Issue</h2>
+
+    <form method="POST" action="{{ url_for('safety') }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="col-span-2">
+            <label for="issue" class="form-label">Issue Description</label>
+            <textarea id="issue" name="issue" class="form-control" rows="4" placeholder="Describe the safety concern..." required></textarea>
+        </div>
+
+        <div>
+            <label for="location" class="form-label">Location</label>
+            <input id="location" name="location" class="form-control" type="text" placeholder="Workshop Area / Section" required>
+        </div>
+
+        <div>
+            <label for="reported_by" class="form-label">Reported By</label>
+            <input id="reported_by" name="reported_by" class="form-control" type="text" placeholder="Your Name / Staff No." required>
+        </div>
+
+        <div class="col-span-2 text-end mt-3">
+            <button type="submit" class="btn btn-custom">Submit Report</button>
+        </div>
+    </form>
+</div>
+
+<!-- Optional: Recently Submitted Reports Section -->
+<div class="bg-white rounded-lg shadow p-6">
+    <h3 class="section-title">📝 Recent Reports</h3>
+
+    <div class="overflow-auto">
+        <table class="table table-striped table-bordered w-full text-sm">
+            <thead>
+                <tr>
+                    <th>Issue</th>
+                    <th>Location</th>
+                    <th>Reported By</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Example static rows - replace with dynamic if needed -->
+                <tr>
+                    <td>Oil spill near engine bay</td>
+                    <td>Section A</td>
+                    <td>Rajiv / BLW0123</td>
+                    <td>2025-07-09</td>
+                    <td><span class="status-warn">Pending</span></td>
+                </tr>
+                <tr>
+                    <td>Loose cable on track 2</td>
+                    <td>Track Section 2</td>
+                    <td>Meena / BLW0543</td>
+                    <td>2025-07-08</td>
+                    <td><span class="status-ok">Resolved</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

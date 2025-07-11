@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary">Health Notes</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="notes" class="form-label">Enter Observations</label>
+            <textarea id="notes" name="notes" class="form-control" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+</div>
+{% endblock %}

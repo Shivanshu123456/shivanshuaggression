@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="container mt-5">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <div class="d-flex align-items-center mb-2">
+      <img src="{{ url_for('static',filename='img/download.jpeg') }}" alt="RailwayLogo" style="height: 50px;" class="me-3">
+      <h2 class="display-6 text-primary mb-0">Dashboard</h2>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <p class="text-muted small mb-0">Welcome, {{ user_name }}!</p>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="darkModeToggle">
+        <label class="form-check-label" for="darkModeToggle">Dark Mode</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+    {% for tab in ['maintenance', 'health', 'energy', 'tools'] %}
+    <li class="nav-item" role="presentation">
+      <button class="nav-link {% if loop.first %}active{% endif %}" id="{{ tab }}-tab"
+        data-bs-toggle="tab" data-bs-target="#{{ tab }}" type="button" role="tab"
+        aria-controls="{{ tab }}" aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+        {{ tab.capitalize() }}
+      </button>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="dashboardTabsContent">
+    {% for tab in ['maintenance', 'health', 'energy', 'tools'] %}
+    <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ tab }}" role="tabpanel"
+      aria-labelledby="{{ tab }}-tab">
+      <div class="card shadow-sm p-4 mb-5">
+        <h5 class="mb-3">{{ tab.capitalize() }} Log</h5>
+        <form action="{{ url_for('submit_tab_data') }}" method="POST">
+          <input type="hidden" name="category" value="{{ tab }}">
+          <div class="mb-3">
+            <label for="{{ tab }}_text" class="form-label">Details</label>
+            <textarea class="form-control" id="{{ tab }}_text" name="details" rows="3" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center text-muted mt-5 small">
+    SmartOps Portal · {{ now.year }}
+    <div class="mt-2">
+      <a href="#" class="text-decoration-none me-3">Help</a>
+      <a href="#" class="text-decoration-none me-3">Settings</a>
+      <a href="{{ url_for('logout') }}" class="text-decoration-none">Log Out</a>
+    </div>
+  </footer>
+</section>
+
+<!-- Scripts -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Restore last active tab
+    const lastTab = localStorage.getItem('activeTab');
+    if (lastTab) {
+      const tabButton = document.querySelector(`button[data-bs-target="${lastTab}"]`);
+      if (tabButton) new bootstrap.Tab(tabButton).show();
+    }
+
+    // Save tab switch
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(btn => {
+      btn.addEventListener('shown.bs.tab', e => {
+        localStorage.setItem('activeTab', e.target.getAttribute('data-bs-target'));
+      });
+    });
+
+    // Dark mode toggle
+    const toggle = document.getElementById('darkModeToggle');
+    const root = document.documentElement;
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+      root.classList.add('bg-dark', 'text-white');
+      toggle.checked = true;
+    }
+    toggle.addEventListener('change', () => {
+      const dark = toggle.checked;
+      root.classList.toggle('bg-dark', dark);
+      root.classList.toggle('text-white', dark);
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    });
+  });
+</script>
+{% endblock %}
